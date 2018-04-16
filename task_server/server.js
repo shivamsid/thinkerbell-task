@@ -95,14 +95,16 @@ router.route('/titles/:title')
     })
 
     .delete(function(req, res) {
-        Titles.remove({
-            title: req.params.title
-        }, function(err, title) {
-            if (err)
-                res.send(err);
-
-            res.json({ message: 'Successfully deleted' });
-        });
+        Titles.findOneAndRemove({ title: req.params.title }) 
+	    .exec(function(err, title) {
+	        if (err) {
+	            return res.json({messsage: 'Cannot remove title'});
+	        }       
+	        if (!title) {
+	            return res.status(404).json({message: 'Title not found'});
+	        }  
+	        res.json({message: 'Successfully deleted' });
+	    });
     });
 
 
